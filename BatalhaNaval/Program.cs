@@ -1,4 +1,6 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using System.Threading.Channels;
+using System.Xml;
 
 namespace BatalhaNaval
 {
@@ -8,18 +10,26 @@ namespace BatalhaNaval
         static string[,] matriz = new string[10, 10];
         static void Main(string[] args)
         {
-            
-            int chances = 15;
             int pontuacao = 0;
             int tentativas = 1;
 
             EnxerMatriz();
             MostrarMatriz(matriz);
 
-            while(tentativas <= 15)
+            while(FimDeJogo(tentativas, 15))
             {
-            ChutarEVerifica(matriz, pontuacao, ref tentativas);
+
+            ChutarEVerifica(matriz, ref pontuacao, ref tentativas);
+
             }
+
+            MostrarFinalGame(matriz);
+
+            MostrarPontuacaoFinal(pontuacao);
+
+
+
+
 
             static void Preenchedor(string letra, int quantidadeElementos)
             {
@@ -45,7 +55,7 @@ namespace BatalhaNaval
 
             static void EnxerMatriz()
             {
-                Preenchedor("A", 10);
+                Preenchedor("A", 2);
                 Preenchedor("C", 1);
                 Preenchedor("R", 2);
             }
@@ -70,7 +80,7 @@ namespace BatalhaNaval
                         {
 
                             Console.Write($"|");
-                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write($"{matriz[linha, coluna]}");
                             Console.ResetColor();
                             Console.Write($"|");
@@ -80,6 +90,25 @@ namespace BatalhaNaval
                             Console.Write($"   {linha}");
                             Console.ResetColor();
 
+                        }
+
+                        else if (matriz[linha, coluna] == "C" || matriz[linha, coluna] == "A" || matriz[linha, coluna] == "R")
+                        {
+                            Console.Write("|");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write(matriz[linha, coluna]);
+                            Console.ResetColor();
+                            Console.Write("|\t");
+                        }
+
+                        else if (matriz[linha,coluna] == "c" || matriz[linha, coluna] == "a" || matriz[linha, coluna] == "r")
+                        {
+                            Console.Write($"|");
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.Write($"{matriz[linha, coluna]}");
+                            Console.ResetColor();
+                            Console.Write($"|\t");
+                            
                         }
 
                         else if (matriz[linha, coluna] == null)
@@ -112,8 +141,7 @@ namespace BatalhaNaval
                             Console.Write("|\t");
                         }
 
-                        else
-                            Console.Write("|{0}| \t", matriz[linha, coluna]);
+                        
                     }
                 }
                 Console.WriteLine("\n---------------------------------------------------------------------------");
@@ -129,7 +157,7 @@ namespace BatalhaNaval
                 Console.WriteLine();
             }
 
-            static int ChutarEVerifica(string[,] matriz, int pontuacao, ref int tentativas)
+            static void ChutarEVerifica(string[,] matriz, ref int pontuacao, ref int tentativas)
             {
 
                 Console.Clear();
@@ -166,6 +194,7 @@ namespace BatalhaNaval
                             if (matriz[coluna, linha] == "A")
                             {
                                 Console.WriteLine("Voce acertou um Porta Aviao");
+                                matriz[coluna, linha] = "a";
                                 pontuacao += 5;
                                 break;
 
@@ -174,6 +203,7 @@ namespace BatalhaNaval
                             else if (matriz[coluna, linha] == "C")
                             {
                                 Console.WriteLine("Voce acertou um Cruzador");
+                                matriz[coluna, linha] = "c";
                                 pontuacao += 15;
                                 break;
 
@@ -182,6 +212,7 @@ namespace BatalhaNaval
                             else if (matriz[coluna, linha] == "R")
                             {
                                 Console.WriteLine("Voce acertou um Rebocador");
+                                matriz[coluna, linha] = "r";
                                 pontuacao += 10;
                                 break;
 
@@ -210,25 +241,88 @@ namespace BatalhaNaval
                             }
                         }
                     }
-                    
+                }
+                Console.ReadLine();
 
-                    // N acertou nada
-                    
+                
+            }
 
-                    //acertou
-                   
+           
+        }
+        public static void MostrarPontuacaoFinal(int pontuacao)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("SUA PONTUACAO FINAL FICOU EM:");
+
+            Console.WriteLine("------------------------");
+            Console.WriteLine($"----------- { pontuacao } ----------");
+            Console.WriteLine("------------------------\n\n");
+
+            Console.ResetColor();
+
+        }
+        public static void MostrarFinalGame(string[,] matriz)
+        {
+            Console.Clear();
+
+            for (int i = 0; i < matriz.GetLength(0); i++)
+            {
+                Console.WriteLine("\n----------------------------------------------------------------------------");
+                for (int j = 0; j < matriz.GetLength(1); j++)
+                {
+                    if (matriz[i,j] != null)
+                    {
+
+                        if(matriz[i, j] == "1" || matriz[i, j] == "2" || matriz[i, j] == "3" || matriz[i, j] == "M")
+                        {
+                            Console.Write($"|");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"{matriz[i, j]}");
+                            Console.ResetColor();
+                            Console.Write($"|\t");
+                        }
+
+                        else if (matriz[i,j] == "a" || matriz[i, j] == "r" || matriz[i, j] == "c")
+                        {
+                            Console.Write($"|");
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.Write($"{matriz[i, j]}");
+                            Console.ResetColor();
+                            Console.Write($"|\t");
+                        }
+
+                        else
+                        {
+                            Console.Write($"|");
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.Write($"{matriz[i, j]}");
+                            Console.ResetColor();
+                            Console.Write($"|\t");
+                        }
+
+
+
+                        
+                    }
+
+                    else if (matriz[i, j] == null)
+                    Console.Write("| | \t");
+
+
+
                 }
 
 
-
-                //Procura 1 casa
-
-
-
-                Console.ReadLine();
-
-                return pontuacao;
             }
+
+            Console.WriteLine("\n");
+        }
+        public static bool FimDeJogo(int tentativas, int chances)
+        {
+            if (tentativas <= chances)
+                return true;
+
+            return false;
         }
 
         public static bool VerificarPosicaoUm(string[,] matriz, int linha, int coluna)
@@ -267,6 +361,10 @@ namespace BatalhaNaval
             {
                 for (int j = linha - 2; j <= linha + 2; j++)
                 {
+
+                    if (i == coluna && j == linha)
+                        continue;
+
                     if (i < 0 || i >= matriz.GetLength(0) || j < 0 || j >= matriz.GetLength(1))
                     {
                         continue; // Posição está fora da matriz
@@ -298,6 +396,31 @@ namespace BatalhaNaval
                     }
 
                     if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R") 
+                    {
+                        matriz[coluna, linha] = distancia;
+                        Console.ResetColor();
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool VerificarM(string[,] matriz, int linha, int coluna)
+        {
+            string distancia = "M";
+
+            for (int i = 0; i <= matriz.GetLength(0); i++)
+            {
+                for (int j = 0; j <= matriz.GetLength(1); j++)
+                {
+                    if (i < 0 || i >= matriz.GetLength(0) || j < 0 || j >= matriz.GetLength(1))
+                    {
+                        continue; // Posição está fora da matriz
+                    }
+
+                    if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R")
                     {
                         matriz[coluna, linha] = distancia;
                         Console.ResetColor();
