@@ -17,12 +17,9 @@ namespace BatalhaNaval
             EnxerMatriz();
             MostrarMatriz(matriz);
 
-            while(FimDeJogo(tentativas, 5))
-            {
-
+            while(FimDeJogo(tentativas, 5) && VerificarSeAcertouTudo(matriz))
             ChutarEVerifica(matriz, ref pontuacao, ref tentativas);
-
-            }
+            
 
             MostrarFinalGame(matriz);
             MostrarPontuacaoFinal(pontuacao);
@@ -45,7 +42,6 @@ namespace BatalhaNaval
                         i -= 1;
                         continue;
                     }
-
                 }
             }
             static void EnxerMatriz()
@@ -56,6 +52,7 @@ namespace BatalhaNaval
             }
             static void MostrarMatriz(string[,] matriz)
             {
+                Console.Clear();
                 for (int linha = 0; linha < matriz.GetLength(0); linha++)
                 {
                     Console.WriteLine("\n---------------------------------------------------------------------------");
@@ -135,7 +132,16 @@ namespace BatalhaNaval
                             Console.Write("|\t");
                         }
 
-                        
+                        else if (matriz[linha, coluna] == "M")
+                        {
+                            Console.Write("|");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("M");
+                            Console.ResetColor();
+                            Console.Write("|\t");
+                        }
+
+
                     }
                 }
                 Console.WriteLine("\n---------------------------------------------------------------------------");
@@ -164,8 +170,6 @@ namespace BatalhaNaval
                 int coluna = int.Parse(chute[1]);
 
                 // Saiu da area
-                VerificaForaDoMapa(linha, coluna);
-
                 if(!VerificaForaDoMapa(linha, coluna))
                 {
                     while (true)
@@ -206,7 +210,7 @@ namespace BatalhaNaval
 
                             }
                         }
-                        VerificarM(matriz, linha, coluna);
+                       
 
                         VerificarPosicaoUm(matriz, linha, coluna);
 
@@ -225,8 +229,14 @@ namespace BatalhaNaval
                             }
                             else
                             {
-                                VerificarPosicaoTres(matriz, linha, coluna);
-                                break;
+                                if (VerificarPosicaoTres(matriz, linha, coluna))
+                                    break;
+
+                                else
+                                {
+                                    VerificarM(matriz, linha, coluna);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -302,11 +312,23 @@ namespace BatalhaNaval
 
             Console.WriteLine("\n");
         }
-        public static bool FimDeJogo(int tentativas, int chances)
+        public static bool FimDeJogo(int tentativas, int chances )
         {
             if (tentativas <= chances)
                 return true;
 
+            return false;
+        }
+        public static bool VerificarSeAcertouTudo(string[,] matriz)
+        {
+            for (int i = 0; i < matriz.GetLength(0); i++)
+            {
+                for (int j = 0; j < matriz.GetLength(1); j++)
+                {
+                    if (matriz[i, j] == "A" || matriz[i, j] == "R" || matriz[i, j] == "C")
+                        return true;
+                }
+            }
             return false;
         }
         public static bool VerificarPosicaoUm(string[,] matriz, int linha, int coluna)
@@ -412,7 +434,7 @@ namespace BatalhaNaval
                     continue; // Posição está fora da matriz
                 }
 
-                if (matriz[j, coluna] == "A" || matriz[j, coluna] == "C" || matriz[j, coluna] == "R")
+                if (matriz[j, linha] == "A" || matriz[j, linha] == "C" || matriz[j, linha] == "R")
                 {
                     matriz[coluna, linha] = distancia;
                     Console.ResetColor();
