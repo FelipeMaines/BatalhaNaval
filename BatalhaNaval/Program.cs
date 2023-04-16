@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Net.Mail;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Channels;
 using System.Xml;
 
@@ -49,7 +50,7 @@ namespace BatalhaNaval
             }
             static void EnxerMatriz()
             {
-                Preenchedor("A", 10);
+                Preenchedor("A", 2);
                 Preenchedor("C", 1);
                 Preenchedor("R", 2);
             }
@@ -88,7 +89,7 @@ namespace BatalhaNaval
                         else if (matriz[linha, coluna] == "C" || matriz[linha, coluna] == "A" || matriz[linha, coluna] == "R")
                         {
                             Console.Write("|");
-                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.Write(matriz[linha, coluna]);
                             Console.ResetColor();
                             Console.Write("|\t");
@@ -205,6 +206,8 @@ namespace BatalhaNaval
 
                             }
                         }
+                        VerificarM(matriz, linha, coluna);
+
                         VerificarPosicaoUm(matriz, linha, coluna);
 
                         if (VerificarPosicaoUm(matriz, linha, coluna))
@@ -389,21 +392,35 @@ namespace BatalhaNaval
 
             for (int i = 0; i <= matriz.GetLength(0); i++)
             {
-                for (int j = 0; j <= matriz.GetLength(1); j++)
+                if (i < 0 || i >= matriz.GetLength(1))
                 {
-                    if (i < 0 || i >= matriz.GetLength(0) || j < 0 || j >= matriz.GetLength(1))
-                    {
-                        continue; // Posição está fora da matriz
-                    }
+                    continue; // Posição está fora da matriz
+                }
 
-                    if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R")
+                if (matriz[i, coluna] == "A" || matriz[i, coluna] == "C" || matriz[i, coluna] == "R")
                     {
                         matriz[coluna, linha] = distancia;
                         Console.ResetColor();
                         return true;
                     }
+            }
+
+            for (int j = 0; j <= matriz.GetLength(1); j++)
+            {
+                if (j < 0 || j >= matriz.GetLength(1))
+                {
+                    continue; // Posição está fora da matriz
+                }
+
+                if (matriz[j, coluna] == "A" || matriz[j, coluna] == "C" || matriz[j, coluna] == "R")
+                {
+                    matriz[coluna, linha] = distancia;
+                    Console.ResetColor();
+                    return true;
                 }
             }
+
+       
             return false;
         }
         public static bool VerificaForaDoMapa(int linha, int coluna)
