@@ -16,7 +16,7 @@ namespace BatalhaNaval
             EnxerMatriz();
             MostrarMatriz(matriz);
 
-            while(FimDeJogo(tentativas, 15))
+            while(FimDeJogo(tentativas, 5))
             {
 
             ChutarEVerifica(matriz, ref pontuacao, ref tentativas);
@@ -24,12 +24,7 @@ namespace BatalhaNaval
             }
 
             MostrarFinalGame(matriz);
-
             MostrarPontuacaoFinal(pontuacao);
-
-
-
-
 
             static void Preenchedor(string letra, int quantidadeElementos)
             {
@@ -52,14 +47,12 @@ namespace BatalhaNaval
 
                 }
             }
-
             static void EnxerMatriz()
             {
-                Preenchedor("A", 2);
+                Preenchedor("A", 10);
                 Preenchedor("C", 1);
                 Preenchedor("R", 2);
             }
-
             static void MostrarMatriz(string[,] matriz)
             {
                 for (int linha = 0; linha < matriz.GetLength(0); linha++)
@@ -95,7 +88,7 @@ namespace BatalhaNaval
                         else if (matriz[linha, coluna] == "C" || matriz[linha, coluna] == "A" || matriz[linha, coluna] == "R")
                         {
                             Console.Write("|");
-                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write(matriz[linha, coluna]);
                             Console.ResetColor();
                             Console.Write("|\t");
@@ -153,27 +146,21 @@ namespace BatalhaNaval
                     Console.ResetColor();
                 }
 
-                Console.WriteLine();
+                Console.WriteLine("\n\nPrimeiro numero");
                 Console.WriteLine();
             }
-
             static void ChutarEVerifica(string[,] matriz, ref int pontuacao, ref int tentativas)
             {
 
                 Console.Clear();
                 MostrarMatriz(matriz);
                 Console.WriteLine($"\nQtd de tentativas: {tentativas}\n");
-
                 Console.WriteLine("Quais as casas que deseja atirar: Ex 0 0");
                 string chutestr = Console.ReadLine();
-
                 string[] chute = chutestr.Split(' ');
-
 
                 int linha = int.Parse(chute[0]);
                 int coluna = int.Parse(chute[1]);
-
-
 
                 // Saiu da area
                 VerificaForaDoMapa(linha, coluna);
@@ -218,7 +205,6 @@ namespace BatalhaNaval
 
                             }
                         }
-
                         VerificarPosicaoUm(matriz, linha, coluna);
 
                         if (VerificarPosicaoUm(matriz, linha, coluna))
@@ -243,11 +229,7 @@ namespace BatalhaNaval
                     }
                 }
                 Console.ReadLine();
-
-                
             }
-
-           
         }
         public static void MostrarPontuacaoFinal(int pontuacao)
         {
@@ -324,7 +306,6 @@ namespace BatalhaNaval
 
             return false;
         }
-
         public static bool VerificarPosicaoUm(string[,] matriz, int linha, int coluna)
         {
             string distancia = "1";
@@ -351,8 +332,6 @@ namespace BatalhaNaval
             }
             return false;
         }
-            
-
         public static bool VerificarPosicaoDois(string[,] matriz, int linha, int coluna)
         {
             string distancia = "2";
@@ -378,10 +357,8 @@ namespace BatalhaNaval
                     }
                 }
             }
-            //a
             return false;
         }
-
         public static bool VerificarPosicaoTres(string[,] matriz, int linha, int coluna)
         {
             string distancia = "3";
@@ -406,7 +383,6 @@ namespace BatalhaNaval
 
             return false;
         }
-
         public static bool VerificarM(string[,] matriz, int linha, int coluna)
         {
             string distancia = "M";
@@ -428,10 +404,8 @@ namespace BatalhaNaval
                     }
                 }
             }
-
             return false;
         }
-
         public static bool VerificaForaDoMapa(int linha, int coluna)
         {
             if (linha > 9 || coluna > 9)
@@ -444,15 +418,6 @@ namespace BatalhaNaval
             }
             return false;
         }
-
-
-
-        
-      
-
-            
-
-
 
     }
 }
