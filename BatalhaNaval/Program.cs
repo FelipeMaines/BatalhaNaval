@@ -13,8 +13,9 @@ namespace BatalhaNaval
             int pontuacao = 0;
             int tentativas = 1;
 
-            EnxerMatriz(matriz, rand);
+            EnxerMatriz();
             MostrarMatriz(matriz);
+
             while(tentativas <= 15)
             {
             ChutarEVerifica(matriz, pontuacao, ref tentativas);
@@ -42,7 +43,7 @@ namespace BatalhaNaval
                 }
             }
 
-            static void EnxerMatriz(string[,] matriz, Random rand)
+            static void EnxerMatriz()
             {
                 Preenchedor("A", 10);
                 Preenchedor("C", 1);
@@ -92,8 +93,24 @@ namespace BatalhaNaval
                             Console.ResetColor();
                             Console.Write("|\t");
                         }
-                            
 
+                        else if (matriz[linha, coluna] == "2")
+                        {
+                            Console.Write("|");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("2");
+                            Console.ResetColor();
+                            Console.Write("|\t");
+                        }
+
+                        else if (matriz[linha, coluna] == "3")
+                        {
+                            Console.Write("|");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("3");
+                            Console.ResetColor();
+                            Console.Write("|\t");
+                        }
 
                         else
                             Console.Write("|{0}| \t", matriz[linha, coluna]);
@@ -135,43 +152,71 @@ namespace BatalhaNaval
 
                 if(!VerificaForaDoMapa(linha, coluna))
                 {
-                    VerificarPosicaoUm(matriz, linha, coluna);
+                    while (true)
+                    {
+                        if (matriz[coluna, linha] == null)
+                        {
+                            Console.WriteLine("Vc errou!");
+                            tentativas++;
 
-                    if (!VerificarPosicaoUm(matriz, linha, coluna))
-                    VerificarPosicaoDois(matriz, linha, coluna);                
+                        }
+
+                        else if (matriz[coluna, linha] != null)
+                        {
+                            if (matriz[coluna, linha] == "A")
+                            {
+                                Console.WriteLine("Voce acertou um Porta Aviao");
+                                pontuacao += 5;
+                                break;
+
+                             }
+
+                            else if (matriz[coluna, linha] == "C")
+                            {
+                                Console.WriteLine("Voce acertou um Cruzador");
+                                pontuacao += 15;
+                                break;
+
+                            }
+
+                            else if (matriz[coluna, linha] == "R")
+                            {
+                                Console.WriteLine("Voce acertou um Rebocador");
+                                pontuacao += 10;
+                                break;
+
+                            }
+                        }
+
+                        VerificarPosicaoUm(matriz, linha, coluna);
+
+                        if (VerificarPosicaoUm(matriz, linha, coluna))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            VerificarPosicaoDois(matriz, linha, coluna);
+
+                            if(VerificarPosicaoDois(matriz, linha, coluna))
+                            {
+                                break;
+                                
+                            }
+                            else
+                            {
+                                VerificarPosicaoTres(matriz, linha, coluna);
+                                break;
+                            }
+                        }
+                    }
+                    
 
                     // N acertou nada
-                    if (matriz[coluna, linha] == null)
-                    {
-                        Console.WriteLine("Vc errou!");
-                        tentativas++;
-
-                    }
+                    
 
                     //acertou
-                    else if (matriz[coluna, linha] != null)
-                    {
-                        if (matriz[coluna, linha] == "A")
-                        {
-                            Console.WriteLine("Voce acertou um Porta Aviao");
-                            pontuacao += 5;
-
-                        }
-
-                        else if (matriz[coluna, linha] == "C")
-                        {
-                            Console.WriteLine("Voce acertou um Cruzador");
-                            pontuacao += 15;
-
-                        }
-
-                        else if (matriz[coluna, linha] == "R")
-                        {
-                            Console.WriteLine("Voce acertou um Rebocador");
-                            pontuacao += 10;
-
-                        }
-                    }
+                   
                 }
 
 
@@ -189,197 +234,79 @@ namespace BatalhaNaval
         public static bool VerificarPosicaoUm(string[,] matriz, int linha, int coluna)
         {
             string distancia = "1";
-            string greenDistancia = "\u001b[32m" + distancia + "\u001b[0m"; // ANSI escape sequence for green color
 
-            if (coluna != 9 && linha != 9 && coluna != 0 && linha != 0)
+            for (int i = coluna - 1; i <= coluna + 1; i++)
             {
-
-                if (matriz[coluna + 1, linha] == "A" || matriz[coluna + 1, linha + 1] == "A" ||
-                    matriz[coluna, linha - 1] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna - 1, linha - 1] == "A" ||
-                    matriz[coluna, linha + 1] == "A")
+                for (int j = linha - 1; j <= linha + 1; j++)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
+                    if (i < 0 || j < 0)
+                        continue;
 
-            else if (coluna == 9 && linha > 0)
-            {
-                if (matriz[coluna, linha + 1] == "A" || matriz[coluna - 1, linha + 1] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna - 1, linha - 1] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
+                    if (i >= matriz.GetLength(0) || j >= matriz.GetLength(1))
+                    {
+                        continue; // Posição está fora da matriz
+                    }
 
-            else if (linha == 9 && coluna > 0)
-            {
-                if (matriz[coluna + 1, linha] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna - 1, linha - 1] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
-
-            else if (linha == 0 && coluna < 9)
-            {
-                if (matriz[coluna, linha + 1] == "A" || matriz[coluna - 1, linha + 1] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna + 1, linha + 1] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
-
-            else if (linha < 9 && coluna == 0)
-            {
-                if (matriz[coluna, linha + 1] == "A" || matriz[coluna, linha - 1] == "A" || matriz[coluna, linha] == "A" || matriz[coluna + 1, linha + 1] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
+                    if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R")
+                    {
+                        matriz[coluna, linha] = distancia;
+                        Console.ResetColor();
+                        return true;
+                    }
                 }
             }
             return false;
         }
+            
 
         public static bool VerificarPosicaoDois(string[,] matriz, int linha, int coluna)
         {
             string distancia = "2";
 
-            //if (coluna < 8 && linha < 8 && coluna > 2 && linha > 2)
-            //{
-
-            //    if (matriz[coluna + 2, linha] == "A" || matriz[coluna + 2, linha + 2] == "A" ||
-            //        matriz[coluna, linha - 2] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna - 2, linha - 2] == "A" ||
-            //        matriz[coluna, linha + 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-            //else if (coluna > 7 && linha > 2)
-            //{
-            //    if (matriz[coluna, linha + 2] == "A" || matriz[coluna - 2, linha + 2] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna - 2, linha - 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-            //else if (linha > 8 && coluna > 2)
-            //{
-            //    if (matriz[coluna + 2, linha] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna - 2, linha - 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-            //else if (linha < 8 && coluna > 1)
-            //{
-            //    if (matriz[coluna, linha + 2] == "A" || matriz[coluna, linha - 2] == "A" || matriz[coluna, linha] == "A" || matriz[coluna + 2, linha + 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-            //else if (linha < 2 && coluna > 7)
-            //{
-            //    if (matriz[coluna, linha + 2] == "A" || matriz[coluna - 2, linha + 2] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna + 2, linha + 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-
-            //else if (linha < 2 && coluna < 7)
-            //{
-            //    if (matriz[coluna, linha + 2] == "A" || matriz[coluna - 2, linha + 2] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna - 2, linha] == "A" || matriz[coluna + 2, linha + 2] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-
-            //else if (linha > 7 && coluna < 2)
-            //{
-            //    if (matriz[coluna, linha - 2] == "A" || matriz[coluna, linha] == "A" || matriz[coluna + 2, linha] == "A")
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Green;
-            //        matriz[coluna, linha] = distancia;
-            //        Console.ResetColor();
-            //        return true;
-            //    }
-            //}
-            //return false;
-
-            if (coluna < 8 && linha < 8 && coluna > 1 && linha > 1)
+            for (int i = coluna - 2; i <= coluna + 2; i++)
             {
-                if (matriz[coluna + 1, linha] == "A" || matriz[coluna, linha - 1] == "A" || matriz[coluna - 1, linha] == "A" || matriz[coluna, linha + 1] == "A")
+                for (int j = linha - 2; j <= linha + 2; j++)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
+                    if (i < 0 || i >= matriz.GetLength(0) || j < 0 || j >= matriz.GetLength(1))
+                    {
+                        continue; // Posição está fora da matriz
+                    }
+
+                    if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R")
+                    {
+                        matriz[coluna, linha] = distancia;
+                        Console.ResetColor();
+                        return true;
+                    }
                 }
             }
-            else if (coluna > 7 && linha > 7)
-            {
-                if (matriz[coluna, linha + 1] == "A" || matriz[coluna - 1, linha] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
-            else if (linha > 7 && coluna < 7)
-            {
-                if (matriz[coluna + 1, linha] == "A" || matriz[coluna - 1, linha] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
-            else if (linha < 8 && coluna > 1)
-            {
-                if (matriz[coluna, linha + 1] == "A" || matriz[coluna, linha - 1] == "A" || matriz[coluna, linha] == "A")
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    matriz[coluna, linha] = distancia;
-                    Console.ResetColor();
-                    return true;
-                }
-            }
+
             return false;
+        }
 
+        public static bool VerificarPosicaoTres(string[,] matriz, int linha, int coluna)
+        {
+            string distancia = "3";
 
+            for (int i = coluna - 3; i <= coluna + 3; i++)
+            {
+                for (int j = linha - 3; j <= linha + 3; j++)
+                {
+                    if (i < 0 || i >= matriz.GetLength(0) || j < 0 || j >= matriz.GetLength(1))
+                    {
+                        continue; // Posição está fora da matriz
+                    }
+
+                    if (matriz[i, j] == "A" || matriz[i, j] == "C" || matriz[i, j] == "R") 
+                    {
+                        matriz[coluna, linha] = distancia;
+                        Console.ResetColor();
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static bool VerificaForaDoMapa(int linha, int coluna)
@@ -394,6 +321,8 @@ namespace BatalhaNaval
             }
             return false;
         }
+
+
 
         
       
