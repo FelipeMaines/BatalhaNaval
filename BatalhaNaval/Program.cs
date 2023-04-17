@@ -1,8 +1,4 @@
-﻿using System.Net.Mail;
-using System.Reflection.Metadata.Ecma335;
-using System.Threading.Channels;
-using System.Xml;
-
+﻿
 namespace BatalhaNaval
 {
     internal partial class Program
@@ -13,16 +9,28 @@ namespace BatalhaNaval
         {
             int pontuacao = 0;
             int tentativas = 1;
+            string continuar = "";
+            do
+            {
+                ResetarGame(ref matriz, ref pontuacao, ref tentativas );
+                EnxerMatriz();
+                MostrarMatriz(matriz);
 
-            EnxerMatriz();
-            MostrarMatriz(matriz);
+                while (FimDeJogo(tentativas, 15) && VerificarSeAcertouTudo(matriz))
+                    ChutarEVerifica(matriz, ref pontuacao, ref tentativas);
 
-            while(FimDeJogo(tentativas, 5) && VerificarSeAcertouTudo(matriz))
-            ChutarEVerifica(matriz, ref pontuacao, ref tentativas);
-            
 
-            MostrarFinalGame(matriz);
-            MostrarPontuacaoFinal(pontuacao);
+                MostrarFinalGame(matriz);
+                MostrarPontuacaoFinal(pontuacao);
+
+                Console.WriteLine("Deseja continuar jogando?");
+                Console.WriteLine("s - Sim  | n - Nao");
+                continuar = Console.ReadLine();  
+
+            } while (continuar != "n" &&  continuar != "N");
+           
+
+
 
             static void Preenchedor(string letra, int quantidadeElementos)
             {
@@ -46,7 +54,7 @@ namespace BatalhaNaval
             }
             static void EnxerMatriz()
             {
-                Preenchedor("A", 2);
+                Preenchedor("A", 10);
                 Preenchedor("C", 1);
                 Preenchedor("R", 2);
             }
@@ -86,7 +94,7 @@ namespace BatalhaNaval
                         else if (matriz[linha, coluna] == "C" || matriz[linha, coluna] == "A" || matriz[linha, coluna] == "R")
                         {
                             Console.Write("|");
-                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Black;
                             Console.Write(matriz[linha, coluna]);
                             Console.ResetColor();
                             Console.Write("|\t");
@@ -161,7 +169,7 @@ namespace BatalhaNaval
 
                 Console.Clear();
                 MostrarMatriz(matriz);
-                Console.WriteLine($"\nQtd de tentativas: {tentativas}\n");
+                Console.WriteLine($"\nQtd de tentativas: {tentativas} - {15}\n");
                 Console.WriteLine("Quais as casas que deseja atirar: Ex 0 0");
                 string chutestr = Console.ReadLine();
                 string[] chute = chutestr.Split(' ');
@@ -457,6 +465,21 @@ namespace BatalhaNaval
             }
             return false;
         }
+
+        public static void ResetarGame(ref string[,] matriz, ref int pontos, ref int tentativas)
+        {
+            for (int i = 0; i < matriz.GetLength(0); i++)
+            {
+                for (int j = 0; j < matriz.GetLength(1); j++)
+                {
+                    matriz[i, j] = null;
+                }
+            }
+
+            pontos = 0;
+            tentativas = 1;
+        }
+        
 
     }
 }
